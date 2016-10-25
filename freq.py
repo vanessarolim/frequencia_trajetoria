@@ -1,6 +1,8 @@
 import heapq
 import matplotlib.pyplot as plot
 import random
+import numpy.random as rnd
+from matplotlib.patches import Ellipse
 
 
 def calcula_frequencia(trajs):
@@ -45,26 +47,38 @@ def plota_pontos(referencia):
     x = []
     y = []
     for r in referencia:
+        plota_circulo(ponto=r, subplot=121)
+        plota_circulo(ponto=r, subplot=122)
         x.append(r[0])
         y.append(r[1])
-
+    
+    #circle = plot.Circle(referencia[0], 2)
+    
     xmin = referencia[0][0] - 1
     xmax = referencia[-1][0] + 1
     ymin = referencia[0][1] - 1
     ymax = referencia[-1][1] + 1
-    plot.subplot(211)
-    plot.subplots_adjust(hspace=.45)
+    
+    #limites = [xmin, xmax, ymin, ymax] #Limite nao proporcional
+    limites = get_limites(x,y)  #Limite porporcional
+    
+    plot.subplot(121)
+    #plot.subplots_adjust(hspace=.45)
     plot.plot(x, y, 'ro')
-    plot.title('Pontos de Referência')
+    plot.title('Pontos de Referencia')
     plot.grid(True)
-    plot.axis([xmin, xmax, ymin, ymax])
-
-    plot.subplot(212)
-    plot.subplots_adjust(hspace=.45)
+    plot.gca().set_aspect('equal', adjustable='box')
+    plot.axis(limites)
+    
+    plot.subplot(122)
+    #plot.subplots_adjust(hspace=.45)
     plot.plot(x, y, 'k')
-    plot.title('Trajetória de Referência')
+    plot.title('Trajetoria de Referencia')
     plot.grid(True)
-    plot.axis([xmin, xmax, ymin, ymax])
+    plot.gca().set_aspect('equal', adjustable='box')
+    plot.axis(limites)
+    
+    plot.tight_layout(rect=[0, 0.03, 1, 0.95])
     plot.show()
 
 
@@ -84,6 +98,12 @@ def raio(ref, distancia):
 
     return resultado
 
+def get_limites(x_list, y_list):
+    print(x_list)
+    print(y_list)
+    menor_valor = min(x_list+y_list)
+    maior_valor = max(x_list+y_list)
+    return [menor_valor-1, maior_valor+1, menor_valor-1, maior_valor+1]
 
 def limpa_traj(heap, minimo):
     possiveis = []
@@ -109,13 +129,23 @@ def encontra_perto(possiveis, raios, trajs):
 
     return resultado
 
-
+def plota_circulo(ponto, raio=0.65, figure=1, subplot=122):
+    fig = plot.figure(figure) 
+    ax = fig.add_subplot(subplot)
+    
+    ell = Ellipse((ponto), raio*2, raio*2)
+    ax.add_artist(ell)
+    ax.scatter(ponto[0], ponto[1])
+    ell.set_clip_box(ax.bbox)
+    ell.set_alpha(0.3)
+    ell.set_facecolor("blue")
+    
 plot.figure(1)
 
 t = [[(0.1, 1.5), (1, 2)], [(1, 4), (1, 2)], [(0, 1), (0, 5)], [(1, 4), (1, 2)], [(0.1, 1.5), (0, 2)],
      [(0.1, 1.5), (0, 2)]]
 
-plot.subplot(221)
+plot.subplot(121)
 for cada in t:
     x = []
     y = []
@@ -123,10 +153,10 @@ for cada in t:
         x.append(c[0])
         y.append(c[1])
     plot.plot(x, y, 'r--')
-plot.title('Trajetórias')
-plot.show()
+#plot.title('Trajetorias')
+#plot.show()
 
 heap, pontos = calcula_frequencia(t)
 traj = pontos_referencia(heap, pontos)
-plot.figure(1)
+#print(traj)
 ptos = plota_pontos(traj)
