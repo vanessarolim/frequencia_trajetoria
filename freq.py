@@ -1,6 +1,5 @@
 import heapq
 import matplotlib.pyplot as plot
-import random
 
 
 def calcula_frequencia(trajs):
@@ -88,8 +87,10 @@ def raio(ref, distancia):
 def limpa_traj(heap, minimo):
     possiveis = []
     for h in heap:
-        if h[0] > minimo:
-            possiveis.append(h[1])
+        if h[0] >= minimo:
+            for t in h[2]:
+                if t not in possiveis:
+                    possiveis.append(t)
     return possiveis
 
 
@@ -105,28 +106,30 @@ def encontra_perto(possiveis, raios, trajs):
         for ponto in traj:
             for pto in raios:
                 if (ponto[0] > pto[0][0] or ponto[0] < pto[0][1]) and (ponto[1] > pto[1][0] or ponto[1] < pto[1][1]):
-                    resultado.append(p)
+                    resultado.append(ponto)
 
     return resultado
 
 
-plot.figure(1)
+# plot.figure(1)
+#
+# t = [[(0.1, 1.5), (1, 2)], [(1, 4), (1, 2)], [(0, 1), (0, 5)], [(1, 4), (1, 2)], [(0.1, 1.5), (0, 2)],
+#      [(0.1, 1.5), (0, 2)]]
+#
+# plot.subplot(221)
+# for cada in t:
+#     x = []
+#     y = []
+#     for c in cada:
+#         x.append(c[0])
+#         y.append(c[1])
+#     plot.plot(x, y, 'r--')
+# plot.title('Trajetórias')
+# plot.show()
+#
+# heap, pontos = calcula_frequencia(t)
+# traj = pontos_referencia(heap, pontos)
+# plot.figure(1)
+# ptos = plota_pontos(traj)
 
-t = [[(0.1, 1.5), (1, 2)], [(1, 4), (1, 2)], [(0, 1), (0, 5)], [(1, 4), (1, 2)], [(0.1, 1.5), (0, 2)],
-     [(0.1, 1.5), (0, 2)]]
 
-plot.subplot(221)
-for cada in t:
-    x = []
-    y = []
-    for c in cada:
-        x.append(c[0])
-        y.append(c[1])
-    plot.plot(x, y, 'r--')
-plot.title('Trajetórias')
-plot.show()
-
-heap, pontos = calcula_frequencia(t)
-traj = pontos_referencia(heap, pontos)
-plot.figure(1)
-ptos = plota_pontos(traj)
