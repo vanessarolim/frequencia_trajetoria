@@ -1,5 +1,5 @@
 import utm
-
+from ponto import *
 
 def clean_coords(c):
     i = 0
@@ -19,14 +19,11 @@ def clean_coords(c):
 def lat_to_utm(coords):
     resultado = []
     for par in coords:
-        resultado.append(utm.from_latlon(par[0], par[1]))
+        p = Ponto()
+        p.tuple_to_point(utm.from_latlon(par[0], par[1]))
+        resultado.append(p)
     return resultado
 
 
-def utm_to_xy(coords):
-    resultado = []
-    for c in coords:
-        x = c[0]
-        y = c[1]
-        resultado.append((x,y))
-    return resultado
+def utm_to_lat(pto):
+    return utm.to_latlon(pto.x, pto.y, zone_letter=pto.zone, zone_number=pto.number)
